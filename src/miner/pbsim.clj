@@ -68,7 +68,14 @@
 
 (defn rally-total [score]
   (+ (:ra score) (:rb score)))
-  
+
+(defn point-diff [score]
+  (let [a (:a score)
+        b (:b score)]
+    (if (> a b)
+      (- a b)
+      (- b a))))
+
 (defn disputed? [score]
   (not= (rally-winner score) (winner score)))
 
@@ -83,4 +90,12 @@
   ([percent-server-win] (rally-avg percent-server-win 1000))
   ([percent-server-win trials]
    (/ (reduce + (map rally-total (repeatedly trials #(pbsim percent-server-win))))
+               (double trials))))
+
+
+(defn diff-avg
+  ([] (diff-avg 40))
+  ([percent-server-win] (diff-avg percent-server-win 1000))
+  ([percent-server-win trials]
+   (/ (reduce + (map point-diff (repeatedly trials #(pbsim percent-server-win))))
                (double trials))))
